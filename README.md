@@ -17,6 +17,18 @@ SearchResult firstPage = await ZooqleClient.SearchAsync("search terms");
 SearchResult secondPage = await ZooqleClient.SearchAsync("search terms", page: 2);
 ```
 
+### Advanced search (filters)
+
+```C#
+// Apps in English that are larger than 1GB
+SearchQuery query = SearchQuery.Create("app name")
+    .InCategory(Category.Apps)
+    .InLanguage(Language.English)
+    .LargerThan(1, SizeUnit.GB);
+
+SearchResult result = await ZooqleClient.SearchAsync(query, page: 1);
+```
+
 ### Search results
 
 ```C#
