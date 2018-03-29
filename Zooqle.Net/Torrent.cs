@@ -1,55 +1,56 @@
-﻿using System;
+using System;
+using System.Diagnostics;
 
 namespace Zooqle.Net
 {
-    /// <summary>
-    /// Data class for <see cref="https://zooqle.com/xmlns/0.1/index.xmlns"/>
-    /// </summary>
-    public class Torrent
+    [DebuggerDisplay("Torrent {Title}")]
+    public sealed class Torrent
     {
-        /// <summary>
-        /// Title of the torrent. XML property "title"
-        /// </summary>
-        public string Title { get; set; }
+        internal Torrent() { }
 
         /// <summary>
-        /// HEX/SHA1 value of the torrent metadata. XML property "torrent:infoHash"
+        /// Title of the torrent.
         /// </summary>
-        public string InfoHash { get; set; }
+        public string Title { get; internal set; }
 
         /// <summary>
-        /// Total size of the torrent in bytes. XML property "torrent:contentLength"
+        /// HEX/SHA1 value of the torrent metadata.
         /// </summary>
-        public long Size { get; set; }
+        public string InfoHash { get; internal set; }
 
         /// <summary>
-        /// Current count of seeders. XML property "torrent:seeds"
+        /// Total size of the torrent in bytes.
         /// </summary>
-        public int Seeds { get; set; }
+        public long Size { get; internal set; }
 
         /// <summary>
-        /// Current count of leechers. XML property "torrent:peers"
+        /// Current count of seeders.
         /// </summary>
-        public int Peers { get; set; }
+        public int SeedCount { get; internal set; }
 
         /// <summary>
-        /// The date on which the torrent was published. XML property "pubDate"
+        /// Current count of leechers.
         /// </summary>
-        public DateTimeOffset PublishDate { get; set; }
+        public int PeerCount { get; internal set; }
 
         /// <summary>
-        /// Torrent's Zooqle page URL. XML property "link" and "guid"
+        /// The date on which the torrent was published.
         /// </summary>
-        public Uri PageUrl { get; set; }
+        public DateTime PublishDate { get; internal set; }
 
         /// <summary>
-        /// Direct link to the torrent file. XML attribute "url" of property "enclosure"
+        /// The URL for the torrent's page on Zooqle.
         /// </summary>
-        public Uri TorrentUrl { get; set; }
+        public Uri PageUrl { get; internal set; }
 
         /// <summary>
-        /// Magnet link for the torrent. XML property "torrent:magnetURI"
+        /// Direct download link for the torrent file.
         /// </summary>
-        public Uri MagnetUri { get; set; }
+        public Uri TorrentUrl { get; internal set; }
+
+        /// <summary>
+        /// Magnet URI for the torrent.
+        /// </summary>
+        public Uri MagnetUri { get; internal set; }
     }
 }
