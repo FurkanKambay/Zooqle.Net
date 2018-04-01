@@ -16,7 +16,7 @@ namespace Zooqle.Net
     }
 
     [System.Flags]
-    public enum Category
+    public enum Categories
     {
         Any = 0 << 0,
         Movies = 1 << 0,

@@ -11,19 +11,29 @@ namespace Zooqle.Net
     public static class ZooqleClient
     {
         internal const string zooqleSearchUrl = "https://zooqle.com/search";
-        private static readonly HttpClient httpClient = new HttpClient();
+        private static readonly HttpClient httpClient = new HttpClient() { BaseAddress = new Uri(zooqleSearchUrl) };
 
         /// <summary>
         /// Retrieves the requested page of the search results for the given query.
         /// </summary>
-        /// <param name="searchQuery">The search query.</param>
+        /// <param name="searchQuery">The advanced search query.</param>
         /// <param name="page">The requested page number. Must be greater than 0.</param>
         /// <exception cref="HttpRequestException"/>
-        public static async Task<SearchResult> SearchAsync(string searchQuery, int page = 1)
+        public static async Task<SearchResult> SearchAsync(SearchQuery searchQuery, int page = 1) =>
+            await SearchAsync(searchQuery.ToString(), page);
+
+        /// <summary>
+        /// Retrieves the requested page of the search results for the given search terms.
+        /// </summary>
+        /// <param name="searchTerms">The search terms.</param>
+        /// <param name="page">The requested page number. Must be greater than 0.</param>
+        /// <exception cref="HttpRequestException"/>
+        public static async Task<SearchResult> SearchAsync(string searchTerms, int page = 1)
         {
-            return string.IsNullOrWhiteSpace(searchQuery) || page < 1 ? SearchResult.Empty
+            return string.IsNullOrWhiteSpace(searchTerms) || page < 1
+                ? SearchResult.Empty
                 : GetSearchResultsFromXml(await httpClient.GetStringAsync(
-                    $"{zooqleSearchUrl}?q={searchQuery}&pg={Math.Max(page, 1)}&fmt=rss").ConfigureAwait(false));
+                    $"?q={Uri.EscapeDataString(searchTerms)}&pg={page}&fmt=rss").ConfigureAwait(false));
         }
 
         private static SearchResult GetSearchResultsFromXml(string xmlContent)
@@ -47,7 +57,7 @@ namespace Zooqle.Net
                 {
                     Title = item.Element("title").Value,
                     PageUrl = new Uri(item.Element("link").Value),
-                    PublishDate = DateTime.Parse(item.Element("pubDate").Value),
+                    PublishDate = DateTime.Parse(item.Element("pubDate").Value).ToUniversalTime(),
                     TorrentUrl = new Uri(item.Element("enclosure").Attribute("url").Value),
                     Size = long.Parse(getTorrentValue("contentLength", item)),
                     InfoHash = getTorrentValue("infoHash", item),

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -9,7 +8,7 @@ using System.Runtime.CompilerServices;
 namespace Zooqle.Net
 {
     // TODO Documentation
-    [DebuggerDisplay("Search results for {SearchTerms} (page {PageNumber} of {TotalPageCount})")]
+    [DebuggerDisplay("Search results for {SearchTerms} (page {PageNumber} of {PageCount})")]
     public sealed class SearchResult
     {
         internal SearchResult() { }
@@ -20,7 +19,7 @@ namespace Zooqle.Net
             Results = new List<Torrent>().AsReadOnly(),
             ItemCountPerPage = 30,
             SearchTerms = string.Empty,
-            SearchUrl = ZooqleClient.zooqleSearchUrl + "?q=&amp;encode=1"
+            SearchUrl = ZooqleClient.zooqleSearchUrl
         });
 
         public ReadOnlyCollection<Torrent> Results { get; internal set; }
@@ -30,7 +29,7 @@ namespace Zooqle.Net
         public string SearchTerms { get; internal set; }
         public string SearchUrl { get; internal set; }
 
-        public int TotalPageCount => (int)Math.Ceiling((float)TotalResultCount / ItemCountPerPage);
-        public int PageNumber => StartIndex / ItemCountPerPage + 1;
+        public int PageCount => (TotalResultCount + ItemCountPerPage - 1) / ItemCountPerPage;
+        public int PageNumber => StartIndex / ItemCountPerPage + (StartIndex == 0 ? 0 : 1);
     }
 }

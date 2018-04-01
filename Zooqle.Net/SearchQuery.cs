@@ -16,17 +16,18 @@ namespace Zooqle.Net
         /// <summary>
         /// Indicates if a search can be made at this state.
         /// </summary>
-        public bool IsValid => !string.IsNullOrEmpty(searchTerms);
+        public bool IsReady => !string.IsNullOrEmpty(searchTerms) || !string.IsNullOrEmpty(exactMatchTerms);
 
         /// <summary>
         /// Creates a new <see cref="SearchQuery"/> with the given search terms.
         /// </summary>
-        /// <param name="searchTerms">
-        /// The main search terms for the query. The query will not be valid if this is
-        /// <see langword="null"/> or whitespace.
-        /// </param>
-        public static SearchQuery Create(string searchTerms) =>
-            new SearchQuery().WithSearchTerms(searchTerms);
+        /// <param name="terms">The main search terms for the query.</param>
+        /// <param name="matchExactly">Whether the given terms are matched exactly or not.</param>
+        public static SearchQuery Create(string terms, bool matchExactly = false)
+        {
+            var query = new SearchQuery();
+            return matchExactly ? query.MatchingExactly(terms) : query.WithSearchTerms(terms);
+        }
 
         /// <summary>
         /// Overwrites the current search terms.
@@ -47,27 +48,45 @@ namespace Zooqle.Net
 
         public SearchQuery MatchingExactly(string exactMatchTerms)
         {
-            this.exactMatchTerms = RemoveWhitespace(exactMatchTerms?.Replace('"', ' '));
+            this.exactMatchTerms = RemoveWhitespace(exactMatchTerms?.Replace('"', spaceC));
             return this;
         }
 
-        public SearchQuery LargerThan(int amount, SizeUnit unit) => InternalSetSize(amount, unit, false);
-
-        public SearchQuery SmallerThan(int amount, SizeUnit unit) => InternalSetSize(amount, unit, true);
-
-        public SearchQuery OlderThan(int amount, TimeUnit unit) => InternalSetAge(amount, unit, true);
-
-        public SearchQuery NewerThan(int amount, TimeUnit unit) => InternalSetAge(amount, unit, false);
-
-        public SearchQuery InCategory(Category category)
+        public SearchQuery LargerThan(int amount, SizeUnit unit)
         {
-            this.category = (category > default(Category) && (int)category < Category.Other.GetHashCode() << 1) ? category : default(Category);
+            minSize = GetSizeValues(false, amount, unit);
+            return this;
+        }
+
+        public SearchQuery SmallerThan(int amount, SizeUnit unit)
+        {
+            maxSize = GetSizeValues(true, amount, unit);
+            return this;
+        }
+
+        public SearchQuery OlderThan(int amount, TimeUnit unit)
+        {
+            age = GetAgeValues(true, amount, unit);
+            return this;
+        }
+
+        public SearchQuery NewerThan(int amount, TimeUnit unit)
+        {
+            age = GetAgeValues(false, amount, unit);
+            return this;
+        }
+
+        public SearchQuery InCategories(Categories categories)
+        {
+            var isValid = categories >= default(Categories) && (int)categories < (int)Categories.Other << 1;
+            this.categories = isValid ? categories : default(Categories);
             return this;
         }
 
         public SearchQuery InLanguage(Language language)
         {
-            this.language = Enum.IsDefined(typeof(Language), language) ? language : default(Language);
+            var isValid = Enum.IsDefined(typeof(Language), language);
+            this.language = isValid ? language : default(Language);
             return this;
         }
 
@@ -78,39 +97,42 @@ namespace Zooqle.Net
         }
 
         /// <summary>
-        /// Returns the query string or <see cref="string.Empty"/> if the query is not valid.
+        /// Returns the query string or <see cref="string.Empty"/> if the query is not ready.
         /// </summary>
         public override string ToString()
         {
-            if (!IsValid)
+            if (!IsReady)
                 return string.Empty;
 
-            var filters = new List<string>() { searchTerms };
+            var filters = new List<string>();
+
+            if (!string.IsNullOrEmpty(searchTerms))
+                filters.Add(searchTerms);
 
             if (!string.IsNullOrEmpty(excludedTerms))
             {
-                foreach (var term in excludedTerms.Split(' '))
+                foreach (var term in excludedTerms.Split(spaceC))
                     filters.Add("-" + term);
             }
 
             if (!string.IsNullOrEmpty(exactMatchTerms))
                 filters.Add("\"" + exactMatchTerms.Trim() + "\"");
 
-            var minIsValid = minSizeAmount > default(int);
-            var maxIsValid = maxSizeAmount > default(int);
-            if (minIsValid || maxIsValid)
-            {
-                filters.Add(
-                    minIsValid && maxIsValid ? minSizeAmount + minSizeUnit.ToString() + "-" + maxSizeAmount + maxSizeUnit
-                    : minIsValid ? ">" + minSizeAmount + minSizeUnit
-                    : "<" + maxSizeAmount + maxSizeUnit);
-            }
+            var minIsValid = minSize.amount > default(int);
+            var maxIsValid = maxSize.amount > default(int);
 
-            if (ageAmount > default(int))
-                filters.Add((ageIsOlder ? "before:" : "after:") + ageAmount + ageUnit.ToString()[0]);
+            if (minIsValid && maxIsValid)
+                filters.Add($"{minSize.amount}{minSize.unit}-{maxSize.amount}{maxSize.unit}");
+            else if (minIsValid)
+                filters.Add($">{minSize.amount}{minSize.unit}");
+            else if (maxIsValid)
+                filters.Add($"<{maxSize.amount}{maxSize.unit}");
 
-            if (category != default(Category))
-                filters.Add("category:" + category.ToString().Replace(space, string.Empty));
+            if (age.amount > default(int))
+                filters.Add((age.isOlder ? "before:" : "after:") + age.amount + age.unit.ToString()[0]);
+
+            if (categories != default(Categories))
+                filters.Add("category:" + categories.ToString().Replace(spaceS, string.Empty));
 
             if (language != default(Language))
             {
@@ -122,78 +144,48 @@ namespace Zooqle.Net
             if (onlyFiles)
                 filters.Add("!onlyFiles");
 
-            return RemoveWhitespace(string.Join(space, filters));
+            return string.Join(spaceS, filters);
         }
 
-        private SearchQuery InternalSetSize(int amount, SizeUnit unit, bool isMax)
+        private (int amount, SizeUnit unit) GetSizeValues(bool isMax, int amount, SizeUnit unit)
         {
-            var isValid = amount > default(int) && unit >= SizeUnit.KB && unit <= SizeUnit.GB;
+            var isValid = amount > default(int) && unit >= SizeUnit.KB && unit <= SizeUnit.GB
+                && (isMax && (minSize.amount == default(int) || IsLessThan(minSize, (amount, unit)))
+                || !isMax && (maxSize.amount == default(int) || IsLessThan((amount, unit), maxSize)));
 
-            if (isValid && isMax)
-                ValidateAndAssign(false, minSizeAmount, minSizeUnit, amount, unit, ref maxSizeAmount, ref maxSizeUnit);
-            else if (isValid)
-                ValidateAndAssign(true, amount, unit, maxSizeAmount, maxSizeUnit, ref minSizeAmount, ref minSizeUnit);
-            else if (isMax)
-                maxSizeAmount = default(int);
-            else
-                minSizeAmount = default(int);
-
-            return this;
+            return isValid ? (amount, unit) : (default(int), default(SizeUnit));
         }
 
-        private SearchQuery InternalSetAge(int amount, TimeUnit unit, bool isOlder)
+        private (int amount, TimeUnit unit, bool isOlder) GetAgeValues(bool isOlder, int amount, TimeUnit unit)
         {
-            ageAmount = default(int);
-
-            if (amount > default(int) && unit >= TimeUnit.Hour && unit <= TimeUnit.Month)
-            {
-                ageAmount = amount;
-                ageUnit = unit;
-                ageIsOlder = isOlder;
-            }
-
-            return this;
+            return amount > default(int) && unit >= TimeUnit.Hour && unit <= TimeUnit.Month
+                ? (amount, unit, isOlder)
+                : (default(int), default(TimeUnit), default(bool));
         }
 
-        private static bool ValidateAndAssign(bool validatingMin, int minAmount, SizeUnit minUnit, int maxAmount, SizeUnit maxUnit, ref int amountToAssign, ref SizeUnit unitToAssign)
-        {
-            long minKB = minAmount;
-            for (var i = 0; i < (int)minUnit; i++)
-                minKB *= 1024;
+        private static bool IsLessThan((int amount, SizeUnit unit) minSize, (int amount, SizeUnit unit) maxSize) =>
+            ConvertToKB(minSize) < ConvertToKB(maxSize);
 
-            long maxKB = maxAmount;
-            for (var i = 0; i < (int)maxUnit; i++)
-                maxKB *= 1024;
-
-            if (maxAmount == default(int) || minAmount == default(int) || minKB < maxKB)
-            {
-                amountToAssign = validatingMin ? minAmount : maxAmount;
-                unitToAssign = validatingMin ? minUnit : maxUnit;
-                return true;
-            }
-            return false;
-        }
+        private static long ConvertToKB((int amount, SizeUnit unit) size) =>
+            (long)size.amount << 10 * (int)size.unit;
 
         private static string RemoveWhitespace(string text) =>
-            string.IsNullOrWhiteSpace(text) ? string.Empty : Regex.Replace(text, @"\s{2,}", space).Trim();
+            string.IsNullOrWhiteSpace(text) ? string.Empty : Regex.Replace(text, @"\s{2,}", spaceS).Trim();
 
         private string searchTerms;
         private string excludedTerms;
         private string exactMatchTerms;
 
-        private int minSizeAmount;
-        private SizeUnit minSizeUnit;
-        private int maxSizeAmount;
-        private SizeUnit maxSizeUnit;
+        private (int amount, SizeUnit unit) minSize;
+        private (int amount, SizeUnit unit) maxSize;
 
-        private int ageAmount;
-        private TimeUnit ageUnit;
-        private bool ageIsOlder;
+        private (int amount, TimeUnit unit, bool isOlder) age;
 
-        private Category category;
+        private Categories categories;
         private Language language;
         private bool onlyFiles;
 
-        private const string space = " ";
+        private const string spaceS = " ";
+        private const char spaceC = ' ';
     }
 }

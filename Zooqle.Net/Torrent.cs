@@ -34,7 +34,7 @@ namespace Zooqle.Net
         public int PeerCount { get; internal set; }
 
         /// <summary>
-        /// The date on which the torrent was published.
+        /// The date and time on which the torrent was published in UTC.
         /// </summary>
         public DateTime PublishDate { get; internal set; }
 

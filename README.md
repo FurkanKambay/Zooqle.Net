@@ -1,6 +1,6 @@
 # Zooqle.Net
 
-A .NET Standard library for searching torrents on [Zooqle](https://zooqle.com/).
+A .NET Standard 2.0 library for searching torrents on [Zooqle](https://zooqle.com/).
 
 ## Usage
 
@@ -20,9 +20,9 @@ SearchResult secondPage = await ZooqleClient.SearchAsync("search terms", page: 2
 ### Advanced search (filters)
 
 ```C#
-// Apps in English that are larger than 1GB
-SearchQuery query = SearchQuery.Create("app name")
-    .InCategory(Category.Apps)
+// Apps and games in English that are larger than 1GB
+SearchQuery query = SearchQuery.Create("search terms")
+    .InCategories(Categories.Apps | Categories.Games)
     .InLanguage(Language.English)
     .LargerThan(1, SizeUnit.GB);
 
