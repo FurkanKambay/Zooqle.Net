@@ -1,6 +1,23 @@
+[![NuGet](https://img.shields.io/nuget/v/Zooqle.Net.svg)](https://www.nuget.org/packages/Zooqle.Net)
+[![GitHub license](https://img.shields.io/github/license/FurkanKambay/Zooqle.Net.svg)](https://github.com/FurkanKambay/Zooqle.Net/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/FurkanKambay/Zooqle.Net.svg)](https://github.com/FurkanKambay/Zooqle.Net/issues)
+[![CodeFactor](https://www.codefactor.io/repository/github/FurkanKambay/Zooqle.Net/badge)](https://www.codefactor.io/repository/github/FurkanKambay/Zooqle.Net)
+
 # Zooqle.Net
 
 A .NET Standard 2.0 library for searching torrents on [Zooqle](https://zooqle.com/).
+
+## Installation
+
+Package Manager
+```
+Install-Package Zooqle.Net -Version 0.3.0 
+```
+
+.NET CLI
+```
+dotnet add package Zooqle.Net 
+```
 
 ## Usage
 
