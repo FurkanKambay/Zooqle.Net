@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("Zooqle.Net.Tests")]
 
 namespace Zooqle.Net
 {
     // TODO Documentation
+
     [DebuggerDisplay("Search results for {SearchTerms} (page {PageNumber} of {PageCount})")]
     public sealed class SearchResult
     {
