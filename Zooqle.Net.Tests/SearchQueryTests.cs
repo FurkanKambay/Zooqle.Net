@@ -5,7 +5,7 @@ namespace Zooqle.Net.Tests
     public class SearchQueryTests
     {
         [Fact]
-        public void Whitespace_And_Illegal_Characters_Are_Removed()
+        public void Whitespace_and_illegal_characters_are_removed()
         {
             var expected = @"search something -exclude -these -words ""match these exactly""";
             var actual = SearchQuery.Create(" search   something ")
@@ -17,7 +17,7 @@ namespace Zooqle.Net.Tests
         }
 
         [Fact]
-        public void Can_Overwrite_Search_Terms()
+        public void Can_overwrite_search_terms()
         {
             var expected = "new";
             var actual = SearchQuery.Create("old")
@@ -28,7 +28,7 @@ namespace Zooqle.Net.Tests
         }
 
         [Fact]
-        public void Can_Overwrite_Exact_Matches()
+        public void Can_overwrite_exact_matches()
         {
             var expected = "\"new\"";
             var actual = SearchQuery.Create("old", true)
@@ -45,7 +45,7 @@ namespace Zooqle.Net.Tests
         [InlineData("es", Language.Spanish)]
         [InlineData("zh", Language.Chinese)]
         [InlineData("zu", Language.Zulu)]
-        public void Language_Codes_Are_Decoded_Correctly(string languageCode, Language language)
+        public void Language_codes_are_decoded_correctly(string languageCode, Language language)
         {
             var expected = terms + " +lang:" + languageCode;
             var actual = SearchQuery.Create(terms)
@@ -60,7 +60,7 @@ namespace Zooqle.Net.Tests
         [InlineData("Movies,TV,Other", Categories.TV | Categories.Movies | Categories.Other)]
         [InlineData("TV,Anime", Categories.TV | Categories.Anime)]
         [InlineData("Games,Apps", Categories.Apps | Categories.Games)]
-        public void Category_Strings_Are_Correct(string categoryText, Categories categories)
+        public void Category_strings_are_correct(string categoryText, Categories categories)
         {
             var expected = terms + " category:" + categoryText;
             var actual = SearchQuery.Create(terms)
@@ -75,7 +75,7 @@ namespace Zooqle.Net.Tests
         [InlineData(2, SizeUnit.MB, 2040, SizeUnit.KB)]
         [InlineData(1052, SizeUnit.MB, 1, SizeUnit.GB)]
         [InlineData(3000, SizeUnit.KB, 2, SizeUnit.MB)]
-        public void Invalid_Size_Amounts_Do_Not_Affect_Query(int minAmount, SizeUnit minUnit, int maxAmount, SizeUnit maxUnit)
+        public void Invalid_size_amounts_do_not_affect_query(int minAmount, SizeUnit minUnit, int maxAmount, SizeUnit maxUnit)
         {
             var expected1 = terms + " >" + minAmount + minUnit;
             var actual1 = SearchQuery.Create(terms)
@@ -99,7 +99,7 @@ namespace Zooqle.Net.Tests
         [InlineData(3, 0, "<2KB")]
         [InlineData(-2, 5, null)]
         [InlineData(4, -3, null)]
-        public void Invalid_Size_Units_Do_Not_Affect_Query(int minUnit, int maxUnit, string sizeText)
+        public void Invalid_size_units_do_not_affect_query(int minUnit, int maxUnit, string sizeText)
         {
             var expected = (terms + " " + sizeText).TrimEnd();
             var actual = SearchQuery.Create(terms)
@@ -111,7 +111,7 @@ namespace Zooqle.Net.Tests
         }
 
         [Fact]
-        public void Default_Filters_Do_Not_Affect_Query()
+        public void Default_filters_do_not_affect_query()
         {
             var actual = SearchQuery.Create(terms)
                 .ExcludingTerms("")

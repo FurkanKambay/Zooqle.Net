@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Zooqle.Net
 {
-    // TODO Documentation
+    // TODO SearchQuery documentation
 
     /// <summary>
     /// Advanced search filter query builder to be used in <see cref="ZooqleClient"/>.
@@ -92,7 +93,7 @@ namespace Zooqle.Net
 
         public SearchQuery OnlyInFiles(bool onlyInFiles = true)
         {
-            onlyFiles = onlyInFiles;
+            this.onlyInFiles = onlyInFiles;
             return this;
         }
 
@@ -110,17 +111,14 @@ namespace Zooqle.Net
                 filters.Add(searchTerms);
 
             if (!string.IsNullOrEmpty(excludedTerms))
-            {
-                foreach (var term in excludedTerms.Split(spaceC))
-                    filters.Add("-" + term);
-            }
+                filters.AddRange(excludedTerms.Split(spaceC).Select(term => "-" + term));
 
             if (!string.IsNullOrEmpty(exactMatchTerms))
                 filters.Add("\"" + exactMatchTerms.Trim() + "\"");
 
             var minIsValid = minSize.amount > default(int);
             var maxIsValid = maxSize.amount > default(int);
-
+            
             if (minIsValid && maxIsValid)
                 filters.Add($"{minSize.amount}{minSize.unit}-{maxSize.amount}{maxSize.unit}");
             else if (minIsValid)
@@ -141,7 +139,7 @@ namespace Zooqle.Net
                 filters.Add("+lang:" + (char)(96 + lang / 26) + (char)(97 + lang % 26));
             }
 
-            if (onlyFiles)
+            if (onlyInFiles)
                 filters.Add("!onlyFiles");
 
             return string.Join(spaceS, filters);
@@ -149,11 +147,11 @@ namespace Zooqle.Net
 
         private (int amount, SizeUnit unit) GetSizeValues(bool isMax, int amount, SizeUnit unit)
         {
-            var isValid = amount > default(int) && unit >= SizeUnit.KB && unit <= SizeUnit.GB
-                && (isMax && (minSize.amount == default(int) || IsLessThan(minSize, (amount, unit)))
-                || !isMax && (maxSize.amount == default(int) || IsLessThan((amount, unit), maxSize)));
+            var isUnitValid = amount > default(int) && unit >= SizeUnit.KB && unit <= SizeUnit.GB;
+            var isAmountValid = isMax && (minSize.amount == default(int) || IsLessThan(minSize, (amount, unit)))
+                || !isMax && (maxSize.amount == default(int) || IsLessThan((amount, unit), maxSize));
 
-            return isValid ? (amount, unit) : (default(int), default(SizeUnit));
+            return (isUnitValid && isAmountValid) ? (amount, unit) : (default(int), default(SizeUnit));
         }
 
         private (int amount, TimeUnit unit, bool isOlder) GetAgeValues(bool isOlder, int amount, TimeUnit unit)
@@ -183,7 +181,7 @@ namespace Zooqle.Net
 
         private Categories categories;
         private Language language;
-        private bool onlyFiles;
+        private bool onlyInFiles;
 
         private const string spaceS = " ";
         private const char spaceC = ' ';

@@ -3,19 +3,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Version>0.3.0</Version>
     <Authors>Furkan Kambay</Authors>
-    <RepositoryUrl>https://github.com/FurkanKambay/Zooqle.Net</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/FurkanKambay/Zooqle.Net</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/FurkanKambay/Zooqle.Net/master/LICENSE</PackageLicenseUrl>
+    <Description>A .NET Standard library for searching torrents on Zooqle.</Description>
     <Copyright>Copyright (c) 2018 Furkan Kambay</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/FurkanKambay/Zooqle.Net/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/FurkanKambay/Zooqle.Net</PackageProjectUrl>
+    <PackageIconUrl>https://zooqle.com/img/zq-favicon32.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/FurkanKambay/Zooqle.Net.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>zooqle torrent</PackageTags>
-    <PackageReleaseNotes></PackageReleaseNotes>
-    <Description>A .NET Standard library for searching torrents on Zooqle.</Description>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile />
-    <PackageIconUrl>https://zooqle.com/img/zq-favicon32.png</PackageIconUrl>
-    <AssemblyVersion>0.3.0.0</AssemblyVersion>
-    <FileVersion>0.3.0.0</FileVersion>
   </PropertyGroup>
 </Project>
