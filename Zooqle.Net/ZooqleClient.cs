@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Zooqle.Net.Query;
 
 namespace Zooqle.Net
 {
@@ -32,11 +33,11 @@ namespace Zooqle.Net
         {
             return string.IsNullOrWhiteSpace(searchTerms) || page < 1
                 ? SearchResult.Empty
-                : GetSearchResultsFromXml(await httpClient.GetStringAsync(
+                : GetSearchResults(await httpClient.GetStringAsync(
                     $"?q={Uri.EscapeDataString(searchTerms)}&pg={page}&fmt=rss").ConfigureAwait(false));
         }
 
-        private static SearchResult GetSearchResultsFromXml(string xmlContent)
+        private static SearchResult GetSearchResults(string xmlContent)
         {
             var channel = XDocument.Parse(xmlContent).Element("rss").Element("channel");
 

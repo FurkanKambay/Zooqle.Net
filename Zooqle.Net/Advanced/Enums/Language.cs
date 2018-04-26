@@ -1,4 +1,4 @@
-namespace Zooqle.Net
+namespace Zooqle.Net.Advanced
 {
     public enum Language
     {
