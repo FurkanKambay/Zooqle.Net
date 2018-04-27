@@ -142,8 +142,9 @@ namespace Zooqle.Net.Advanced
             if (language != default(Language))
             {
                 // Hexavigesimal decoding of enum values (magic number to 2-letter codes)
-                var lang = (int)language - 1; // TODO decrease enum values by one
-                filters.Add("+lang:" + (char)(96 + (lang / 26)) + (char)(97 + (lang % 26)));
+                var tens = (char)(96 + ((int)language / 26));
+                var ones = (char)(97 + ((int)language % 26));
+                filters.Add("+lang:" + tens + ones);
             }
 
             if (onlyInFiles)
