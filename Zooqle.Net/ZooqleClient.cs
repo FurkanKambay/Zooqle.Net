@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Zooqle.Net.Query;
+using Zooqle.Net.Advanced;
 
 namespace Zooqle.Net
 {
@@ -20,7 +20,7 @@ namespace Zooqle.Net
         /// <param name="searchQuery">The advanced search query.</param>
         /// <param name="page">The requested page number. Must be greater than 0.</param>
         /// <exception cref="HttpRequestException"/>
-        public static async Task<SearchResult> SearchAsync(SearchQuery searchQuery, int page = 1) =>
+        public static async Task<SearchResult> SearchAsync(AdvancedQuery searchQuery, int page = 1) =>
             await SearchAsync(searchQuery.ToString(), page);
 
         /// <summary>
