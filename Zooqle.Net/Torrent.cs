@@ -1,12 +1,12 @@
 using System;
-using System.Diagnostics;
 
 namespace Zooqle.Net
 {
-    [DebuggerDisplay("Torrent {Title}")]
     public sealed class Torrent
     {
         internal Torrent() { }
+
+        public override string ToString() => $@"Torrent ""{Title}""";
 
         /// <summary>
         /// Title of the torrent.

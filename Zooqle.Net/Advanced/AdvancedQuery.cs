@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Zooqle.Net.Advanced
 {
-    // TODO SearchQuery documentation
+    // TODO AdvancedQuery documentation
 
     /// <summary>
     /// Advanced search filter query builder to be used in <see cref="ZooqleClient"/>.
@@ -64,7 +64,7 @@ namespace Zooqle.Net.Advanced
             get => minSize;
             set
             {
-                var isValid = value.IsValid && !maxSize.IsValid || value.Kilobytes < maxSize.Kilobytes;
+                var isValid = value.IsValid && (!maxSize.IsValid || value.Kilobytes < maxSize.Kilobytes);
                 minSize = isValid ? value : default(Size);
             }
         }
@@ -74,7 +74,7 @@ namespace Zooqle.Net.Advanced
             get => maxSize;
             set
             {
-                var isValid = value.IsValid && !minSize.IsValid || value.Kilobytes > minSize.Kilobytes;
+                var isValid = value.IsValid && (!minSize.IsValid || value.Kilobytes > minSize.Kilobytes);
                 maxSize = isValid ? value : default(Size);
             }
         }
@@ -143,7 +143,7 @@ namespace Zooqle.Net.Advanced
             {
                 // Hexavigesimal decoding of enum values (magic number to 2-letter codes)
                 var lang = (int)language - 1; // TODO decrease enum values by one
-                filters.Add("+lang:" + (char)(96 + lang / 26) + (char)(97 + lang % 26));
+                filters.Add("+lang:" + (char)(96 + (lang / 26)) + (char)(97 + (lang % 26)));
             }
 
             if (onlyInFiles)

@@ -12,6 +12,8 @@ namespace Zooqle.Net.Advanced
         }
 
         public bool IsValid => Amount > 0 && Unit >= SizeUnit.KB && Unit <= SizeUnit.GB;
-        public long Kilobytes => (long)Amount << 10 * (int)Unit;
+        public long Kilobytes => (long)Amount << (10 * (int)Unit);
+
+        public override string ToString() => $"{Amount} {Unit}";
     }
 }
