@@ -23,7 +23,7 @@ namespace Zooqle.Net
 
         public readonly static SearchResult Empty = new SearchResult
         {
-            Results = new List<Torrent>().AsReadOnly(),
+            Results = new ReadOnlyCollection<Torrent>(new List<Torrent>()),
             ItemCountPerPage = 30,
             SearchTerms = string.Empty,
             SearchUrl = ZooqleClient.zooqleSearchUrl

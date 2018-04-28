@@ -5,7 +5,7 @@
 
 # Zooqle.Net
 
-A .NET Standard 2.0 library for searching torrents on [Zooqle](https://zooqle.com/).
+A .NET Standard 1.1 library for searching torrents on [Zooqle](https://zooqle.com/).
 
 ## Installation
 

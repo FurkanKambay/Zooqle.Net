@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.4.1</Version>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <Version>0.4.2</Version>
     <Authors>Furkan Kambay</Authors>
     <Description>A .NET Standard library for searching torrents on Zooqle.</Description>
     <Copyright>Copyright (c) 2018 Furkan Kambay</Copyright>
@@ -12,4 +12,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>zooqle torrent</PackageTags>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="GitInfo" Version="2.0.10" />
+  </ItemGroup>
 </Project>
