@@ -1,8 +1,8 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Zooqle.Net.Advanced;
@@ -54,7 +54,7 @@ namespace Zooqle.Net
                 TotalResultCount = int.Parse(getOpenSearchElement("totalResults").Value),
                 StartIndex = int.Parse(getOpenSearchElement("startIndex").Value),
                 ItemCountPerPage = int.Parse(getOpenSearchElement("itemsPerPage").Value),
-                Results = channel.Elements("item").Select(item => new Torrent
+                Results = new ReadOnlyCollection<Torrent>(channel.Elements("item").Select(item => new Torrent
                 {
                     Title = item.Element("title").Value,
                     PageUrl = new Uri(item.Element("link").Value),
@@ -65,15 +65,14 @@ namespace Zooqle.Net
                     MagnetUri = new Uri(getTorrentValue("magnetURI", item)),
                     SeedCount = int.Parse(getTorrentValue("seeds", item)),
                     PeerCount = int.Parse(getTorrentValue("peers", item))
-                }).ToList().AsReadOnly()
+                }).ToList())
             };
         }
 
         static ZooqleClient()
         {
-            var v = Assembly.GetExecutingAssembly().GetName().Version;
             httpClient.DefaultRequestHeaders.Accept.ParseAdd("applicaton/rss+xml");
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"Zooqle.Net/{v.Major}.{v.Minor}.{v.Build}");
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"Zooqle.Net/{ThisAssembly.Git.BaseTag.Substring(1)}");
         }
     }
 }
