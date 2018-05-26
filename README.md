@@ -1,7 +1,8 @@
-[![NuGet](https://img.shields.io/nuget/v/Zooqle.Net.svg)](https://www.nuget.org/packages/Zooqle.Net)
-[![GitHub license](https://img.shields.io/github/license/FurkanKambay/Zooqle.Net.svg)](https://github.com/FurkanKambay/Zooqle.Net/blob/master/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/FurkanKambay/Zooqle.Net.svg)](https://github.com/FurkanKambay/Zooqle.Net/issues)
+[![Build status](https://ci.appveyor.com/api/projects/status/fs435q89drf083mc?svg=true)](https://ci.appveyor.com/project/FurkanKambay/zooqle-net)
 [![CodeFactor](https://www.codefactor.io/repository/github/FurkanKambay/Zooqle.Net/badge)](https://www.codefactor.io/repository/github/FurkanKambay/Zooqle.Net)
+[![NuGet package](https://img.shields.io/nuget/v/Zooqle.Net.svg)](https://www.nuget.org/packages/Zooqle.Net)
+[![GitHub issues](https://img.shields.io/github/issues/FurkanKambay/Zooqle.Net.svg)](https://github.com/FurkanKambay/Zooqle.Net/issues)
+[![GitHub license](https://img.shields.io/github/license/FurkanKambay/Zooqle.Net.svg)](https://github.com/FurkanKambay/Zooqle.Net/blob/master/LICENSE)
 
 # Zooqle.Net
 
@@ -31,8 +32,8 @@ using Zooqle.Net.Advanced; // for advanced search
 ### Basic search
 
 ```C#
-SearchResult firstPage = await ZooqleClient.SearchAsync("search terms");
-SearchResult secondPage = await ZooqleClient.SearchAsync("search terms", page: 2);
+SearchResult firstPage = await ZooqleClient.SearchTorrentAsync("search terms");
+SearchResult secondPage = await ZooqleClient.SearchTorrentAsync("search terms", page: 2);
 ```
 
 ### Advanced search (filters)
@@ -45,15 +46,15 @@ AdvancedQuery query = new AdvancedQuery("search terms")
     Language = Language.English,
     MinSize = new Size(1, SizeUnit.GB),
     Age = Age.NewerThan(2, TimeUnit.Week)
-}
+};
 
-SearchResult result = await ZooqleClient.SearchAsync(query, page: 1);
+SearchResult result = await ZooqleClient.SearchTorrentAsync(query, page: 1);
 ```
 
 ### Search results
 
 ```C#
-SearchResult page = await ZooqleClient.SearchAsync("search terms");
+SearchResult page = await ZooqleClient.SearchTorrentAsync("search terms");
 Torrent torrent = page.Results[0];
 
 string title = torrent.Title;

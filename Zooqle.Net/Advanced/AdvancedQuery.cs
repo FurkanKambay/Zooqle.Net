@@ -20,7 +20,6 @@ namespace Zooqle.Net.Advanced
         private Age age;
         private Categories categories;
         private Language language;
-        private bool onlyInFiles;
 
         /// <summary>
         /// Indicates if a search can be made at this state.
@@ -101,11 +100,7 @@ namespace Zooqle.Net.Advanced
             set => language = Enum.IsDefined(typeof(Language), value) ? value : default(Language);
         }
 
-        public bool OnlyInFiles
-        {
-            get => onlyInFiles;
-            set => onlyInFiles = value;
-        }
+        public bool OnlyInFiles { get; set; }
 
         /// <summary>
         /// Returns the query string or <see cref="string.Empty"/> if the query is not ready.
@@ -147,7 +142,7 @@ namespace Zooqle.Net.Advanced
                 filters.Add("+lang:" + tens + ones);
             }
 
-            if (onlyInFiles)
+            if (OnlyInFiles)
                 filters.Add("!onlyFiles");
 
             return string.Join(spaceS, filters);
