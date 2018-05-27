@@ -19,20 +19,20 @@ namespace Zooqle.Net
         /// <summary>
         /// Searches for torrents with the given advanced query.
         /// </summary>
-        /// <remarks>Info hashes and IMDb IDs are treated as exact-match searches.</remarks>
         /// <param name="searchQuery">The advanced search query.</param>
         /// <param name="page">The requested page number. Must be greater than 0.</param>
         /// <exception cref="HttpRequestException"/>
+        /// <remarks>Info hashes and IMDb IDs are treated as exact-match searches.</remarks>
         public static async Task<SearchResult> SearchTorrentAsync(AdvancedQuery searchQuery, int page = 1) =>
             await SearchTorrentAsync(searchQuery.ToString(), page);
 
         /// <summary>
         /// Searches for torrents with the given search terms.
         /// </summary>
-        /// <remarks>Info hashes and IMDb IDs are treated as exact-match searches.</remarks>
         /// <param name="searchTerms">The search terms.</param>
         /// <param name="page">The requested page number. Must be greater than 0.</param>
         /// <exception cref="HttpRequestException"/>
+        /// <remarks>Info hashes and IMDb IDs are treated as exact-match searches.</remarks>
         public static async Task<SearchResult> SearchTorrentAsync(string searchTerms, int page = 1)
         {
             if (string.IsNullOrWhiteSpace(searchTerms) || page < 1)
@@ -45,6 +45,29 @@ namespace Zooqle.Net
             var xmlContent = await httpClient.GetStringAsync(query).ConfigureAwait(false);
 
             return GetSearchResults(xmlContent);
+        }
+
+        /// <summary>
+        /// Finds the torrent with the given info hash.
+        /// </summary>
+        /// <param name="infoHash">The info hash in base-16 or base-32.</param>
+        /// <returns>
+        /// The page URL if the info hash is valid and the torrent exists.
+        /// <see langword="null"/> if the torrent does not exist or the info hash is invalid.
+        /// </returns>
+        /// <exception cref="HttpRequestException"/>
+        public static async Task<Uri> FindTorrentByInfoHashAsync(string infoHash)
+        {
+            if (IsInfoHash(infoHash))
+            {
+                var query = $"?q=" + infoHash;
+                var request = new HttpRequestMessage(HttpMethod.Head, query);
+                var response = await httpClient.SendAsync(request).ConfigureAwait(false);
+
+                if (request.RequestUri.AbsolutePath != "/search")
+                    return request.RequestUri;
+            }
+            return null;
         }
 
         private static SearchResult GetSearchResults(string xmlContent)
@@ -82,15 +105,14 @@ namespace Zooqle.Net
         private static bool IsInfoHash(string infoHash)
         {
             // Info hash: base-16 or base-32
-            var pattern = @"(?:^[0-9A-F]{40}$)|(?:^[0-9A-V]{32}$)";
-            return (infoHash != null && Regex.IsMatch(infoHash.ToUpperInvariant(), pattern));
+            return IsMatch(infoHash.ToUpperInvariant(), @"(?:^[0-9A-F]{40}$)|(?:^[0-9A-V]{32}$)");
         }
 
-        private static bool IsImdbId(string imdbId)
-        {
-            var pattern = @"^tt[0-9]{7}$";
-            return (imdbId != null && Regex.IsMatch(imdbId, pattern));
-        }
+        private static bool IsImdbId(string imdbId) =>
+            IsMatch(imdbId, @"^tt[0-9]{7}$");
+
+        private static bool IsMatch(string input, string pattern) =>
+            (input != null && Regex.IsMatch(input, pattern));
 
         static ZooqleClient()
         {

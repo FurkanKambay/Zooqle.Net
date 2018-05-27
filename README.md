@@ -36,6 +36,13 @@ SearchResult firstPage = await ZooqleClient.SearchTorrentAsync("search terms");
 SearchResult secondPage = await ZooqleClient.SearchTorrentAsync("search terms", page: 2);
 ```
 
+### Find with info hash
+
+```C#
+// Info hash: base-16 or base-32 string
+Uri pageUri32 = await ZooqleClient.FindTorrentByInfoHashAsync("0123456789ABCDEF000000000000000000000000");
+```
+
 ### Advanced search (filters)
 
 ```C#
