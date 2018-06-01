@@ -26,7 +26,7 @@ namespace Zooqle.Net
             Results = new ReadOnlyCollection<Torrent>(new List<Torrent>()),
             ItemCountPerPage = 30,
             SearchTerms = string.Empty,
-            SearchUrl = ZooqleClient.zooqleSearchUrl
+            SearchUrl = ZooqleClient.zooqleBaseUrl + ZooqleClient.zooqleTorrentSearchPath
         };
     }
 }

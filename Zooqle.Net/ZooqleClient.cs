@@ -10,11 +10,11 @@ using Zooqle.Net.Advanced;
 
 namespace Zooqle.Net
 {
-    public static class ZooqleClient
+    public static partial class ZooqleClient
     {
         internal const string zooqleBaseUrl = "https://zooqle.com/";
-        internal const string zooqleSearchUrl = "https://zooqle.com/search";
-        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri(zooqleSearchUrl) };
+        internal const string zooqleTorrentSearchPath = "search";
+        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri(zooqleBaseUrl) };
 
         /// <summary>
         /// Searches for torrents with the given advanced query.
@@ -41,7 +41,7 @@ namespace Zooqle.Net
             if (IsImdbId(searchTerms) || IsInfoHash(searchTerms))
                 searchTerms = $"\"{searchTerms}\"";
 
-            var query = $"?fmt=rss&q={searchTerms}&pg={page}";
+            var query = $"{zooqleTorrentSearchPath}?fmt=rss&q={searchTerms}&pg={page}";
             var xmlContent = await httpClient.GetStringAsync(query).ConfigureAwait(false);
 
             return GetSearchResults(xmlContent);
@@ -60,11 +60,11 @@ namespace Zooqle.Net
         {
             if (IsInfoHash(infoHash))
             {
-                var query = $"?q=" + infoHash;
+                var query = $"{zooqleTorrentSearchPath}?q=" + infoHash;
                 var request = new HttpRequestMessage(HttpMethod.Head, query);
                 var response = await httpClient.SendAsync(request).ConfigureAwait(false);
 
-                if (request.RequestUri.AbsolutePath != "/search")
+                if (request.RequestUri.AbsolutePath != $"/{zooqleTorrentSearchPath}")
                     return request.RequestUri;
             }
             return null;
@@ -116,8 +116,11 @@ namespace Zooqle.Net
 
         static ZooqleClient()
         {
-            httpClient.DefaultRequestHeaders.Accept.ParseAdd("applicaton/rss+xml");
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"Zooqle.Net/{ThisAssembly.Git.BaseTag.Substring(1)}");
+            var headers = httpClient.DefaultRequestHeaders;
+            headers.Accept.ParseAdd("applicaton/rss+xml");
+            headers.Accept.ParseAdd("application/json");
+            headers.Referrer = new Uri(zooqleBaseUrl);
+            headers.UserAgent.ParseAdd($"Zooqle.Net/{ThisAssembly.Git.BaseTag.Substring(1)}");
         }
     }
 }
