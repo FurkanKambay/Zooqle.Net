@@ -15,7 +15,7 @@ namespace Zooqle.Net
             Type = (ItemType)typeString[0];
 
             if (imageId > 0)
-                ImageUrl = new Uri($"https://zooqle.com/img-{imageId}.jpg");
+                Poster = new Poster(imageId);
 
             var type = Type.ToString().ToLowerInvariant();
             var tail = (Type == ItemType.Tv) ? "/" : ".html";
@@ -24,7 +24,7 @@ namespace Zooqle.Net
 
         public readonly ItemType Type;
         public readonly Uri PageUrl;
-        public readonly Uri ImageUrl;
+        public readonly Poster Poster;
 
         [JsonProperty("n", Required = Required.Always)]
         public readonly string Name;
