@@ -18,8 +18,7 @@ namespace Zooqle.Net
             var query = $"{zooqleItemSearchPath}/{searchTerms}";
             var response = await httpClient.GetStringAsync(query).ConfigureAwait(false);
 
-            var items = JsonConvert.DeserializeObject<List<ZooqleItem>>(response);
-            return new ReadOnlyCollection<ZooqleItem>(items);
+            return JsonConvert.DeserializeObject<ReadOnlyCollection<ZooqleItem>>(response);
         }
 
         public static async Task<ZooqleItem> GetItemFromImdbIdAsync(string imdbId)
