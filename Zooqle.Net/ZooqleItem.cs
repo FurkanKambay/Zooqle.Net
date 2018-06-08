@@ -7,12 +7,11 @@ namespace Zooqle.Net
     {
         [JsonConstructor]
         internal ZooqleItem(
-            [JsonProperty("t", Required = Required.Always)] string typeString,
+            [JsonProperty("t", Required = Required.Always)] char typeChar,
             [JsonProperty("id", Required = Required.Always)] string id,
             [JsonProperty("i", Required = Required.DisallowNull)] int imageId)
         {
-            // ASCII value of the char (t is always a single char)
-            Type = (ItemType)typeString[0];
+            Type = (ItemType)typeChar;
 
             if (imageId > 0)
                 Poster = new Poster(imageId);
@@ -33,13 +32,30 @@ namespace Zooqle.Net
         public readonly int Count;
 
         [JsonProperty("d", Required = Required.DisallowNull)]
-        public readonly int Date;
+        public readonly int Year;
+
+        public override string ToString()
+        {
+            string name, countThing;
+            if (Type == ItemType.Actor)
+            {
+                name = Name;
+                countThing = "movies";
+            }
+            else
+            {
+                name = $"{Name} ({Year})";
+                countThing = "torrents";
+            }
+
+            return $"{Type} - {name} - {Count} {countThing}";
+        }
 
         public enum ItemType
         {
-            Movie = 109,
-            Tv = 116,
-            Actor = 97
+            Movie = 'm',
+            Tv = 't',
+            Actor = 'a'
         }
     }
 }
