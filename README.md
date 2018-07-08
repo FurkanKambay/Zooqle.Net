@@ -20,32 +20,42 @@ Install-Package Zooqle.Net
 dotnet add package Zooqle.Net 
 ```
 
+## Class Diagrams
+
+- **Zooqle.Net**
+
+![as](https://i.imgur.com/7rhvAGR.png)
+
+- **Zooqle.Net.Advanced**
+
+![s](https://i.imgur.com/rN29h1m.png)
+
 ## Usage
 
 ### Import namespace
 
-```C#
+```csharp
 using Zooqle.Net;
 using Zooqle.Net.Advanced; // for advanced search
 ```
 
-### Basic search
+### Basic torrent search
 
-```C#
+```csharp
 SearchResult firstPage = await ZooqleClient.SearchTorrentAsync("search terms");
 SearchResult secondPage = await ZooqleClient.SearchTorrentAsync("search terms", page: 2);
 ```
 
-### Find with info hash
+### Find torrent with an info hash
 
-```C#
+```csharp
 // Info hash: base-16 or base-32 string
 Uri pageUri32 = await ZooqleClient.FindTorrentByInfoHashAsync("0123456789ABCDEF000000000000000000000000");
 ```
 
-### Advanced search (filters)
+### Advanced torrent search (filters)
 
-```C#
+```csharp
 // Apps and games in English that are larger than 1GB and released in the last 2 weeks
 AdvancedQuery query = new AdvancedQuery("search terms")
 {
@@ -58,13 +68,20 @@ AdvancedQuery query = new AdvancedQuery("search terms")
 SearchResult result = await ZooqleClient.SearchTorrentAsync(query, page: 1);
 ```
 
-### Search results
+### Torrent search results
 
-```C#
-SearchResult page = await ZooqleClient.SearchTorrentAsync("search terms");
-Torrent torrent = page.Results[0];
+```csharp
+var resultPage = await ZooqleClient.SearchTorrentAsync("search terms");
+```
 
-string title = torrent.Title;
-int seedCount = torrent.SeedCount;
-Uri magnetUri = torrent.MagnetUri;
+### Searching for movies, TV shows, actors
+
+```csharp
+var results = await ZooqleClient.SearchItemAsync("search terms");
+```
+
+### Getting movies or TV shows by IMDb IDs
+
+```csharp
+var item = await ZooqleClient.GetItemFromImdbIdAsync("tt0106179");
 ```
