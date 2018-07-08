@@ -17,7 +17,7 @@ namespace Zooqle.Net
                 Poster = new Poster(imageId);
 
             var type = Type.ToString().ToLowerInvariant();
-            var tail = (Type == ItemType.Tv) ? "/" : ".html";
+            var tail = (Type == ItemType.TV) ? "/" : ".html";
             PageUrl = new Uri($"https://zooqle.com/{type}/--{id}{tail}");
         }
 
@@ -61,7 +61,7 @@ namespace Zooqle.Net
         public enum ItemType
         {
             Movie = 'm',
-            Tv = 't',
+            TV = 't',
             Actor = 'a'
         }
     }
