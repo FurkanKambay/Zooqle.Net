@@ -13,7 +13,7 @@
     <PackageTags>zooqle torrent</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="GitInfo" Version="2.0.10" />
+    <PackageReference Include="GitInfo" Version="2.0.11" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 </Project>
