@@ -68,12 +68,6 @@ AdvancedQuery query = new AdvancedQuery("search terms")
 SearchResult result = await ZooqleClient.SearchTorrentAsync(query, page: 1);
 ```
 
-### Torrent search results
-
-```csharp
-var resultPage = await ZooqleClient.SearchTorrentAsync("search terms");
-```
-
 ### Searching for movies, TV shows, actors
 
 ```csharp
