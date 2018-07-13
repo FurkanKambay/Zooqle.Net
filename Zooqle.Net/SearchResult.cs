@@ -19,14 +19,14 @@ namespace Zooqle.Net
         public string SearchUrl { get; internal set; }
 
         public int PageCount => (TotalResultCount + ItemCountPerPage - 1) / ItemCountPerPage;
-        public int PageNumber => TotalResultCount == 0 ? 0 : (StartIndex / ItemCountPerPage + 1);
+        public int PageNumber => (TotalResultCount == 0) ? 0 : (StartIndex / ItemCountPerPage + 1);
 
         public readonly static SearchResult Empty = new SearchResult
         {
             Results = new ReadOnlyCollection<Torrent>(new List<Torrent>()),
             ItemCountPerPage = 30,
             SearchTerms = string.Empty,
-            SearchUrl = ZooqleClient.zooqleSearchUrl
+            SearchUrl = ZooqleClient.zooqleBaseUrl + ZooqleClient.zooqleTorrentSearchPath
         };
     }
 }
