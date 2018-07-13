@@ -60,7 +60,7 @@ namespace Zooqle.Net
         {
             if (IsInfoHash(infoHash))
             {
-                var query = $"{zooqleTorrentSearchPath}?q=" + infoHash;
+                var query = $"{zooqleTorrentSearchPath}?q={infoHash}";
                 var request = new HttpRequestMessage(HttpMethod.Head, query);
                 var response = await httpClient.SendAsync(request).ConfigureAwait(false);
 
@@ -102,13 +102,13 @@ namespace Zooqle.Net
             };
         }
 
-        private static bool IsInfoHash(string infoHash)
+        public static bool IsInfoHash(string infoHash)
         {
             // Info hash: base-16 or base-32
-            return IsMatch(infoHash.ToUpperInvariant(), @"(?:^[0-9A-F]{40}$)|(?:^[0-9A-V]{32}$)");
+            return IsMatch(infoHash, @"(?:^[0-9A-f]{40}$)|(?:^[0-9A-v]{32}$)");
         }
 
-        private static bool IsImdbId(string imdbId) =>
+        public static bool IsImdbId(string imdbId) =>
             IsMatch(imdbId, @"^tt[0-9]{7}$");
 
         private static bool IsMatch(string input, string pattern) =>
