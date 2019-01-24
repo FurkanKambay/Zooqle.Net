@@ -21,12 +21,12 @@ namespace Zooqle.Net
         public int PageCount => (TotalResultCount + ItemCountPerPage - 1) / ItemCountPerPage;
         public int PageNumber => (TotalResultCount == 0) ? 0 : (StartIndex / ItemCountPerPage + 1);
 
-        public readonly static SearchResult Empty = new SearchResult
+        public static readonly SearchResult Empty = new SearchResult
         {
             Results = new ReadOnlyCollection<Torrent>(new List<Torrent>()),
             ItemCountPerPage = 30,
             SearchTerms = string.Empty,
-            SearchUrl = ZooqleClient.zooqleBaseUrl + ZooqleClient.zooqleTorrentSearchPath
+            SearchUrl = ZooqleClient.ZooqleBaseUrl + ZooqleClient.ZooqleTorrentSearchPath
         };
     }
 }

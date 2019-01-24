@@ -17,7 +17,7 @@ Install-Package Zooqle.Net
 
 .NET CLI
 ```
-dotnet add package Zooqle.Net 
+dotnet add package Zooqle.Net
 ```
 
 ## Class Diagrams

@@ -22,6 +22,6 @@ namespace Zooqle.Net
         public readonly Uri Tiny;
 
         private Uri GetUri(int sizeNumber) =>
-            new Uri($"{ZooqleClient.zooqleBaseUrl}img-{id}-{sizeNumber}.jpg");
+            new Uri($"{ZooqleClient.ZooqleBaseUrl}img-{id}-{sizeNumber}.jpg");
     }
 }

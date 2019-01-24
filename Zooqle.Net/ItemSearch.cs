@@ -8,7 +8,7 @@ namespace Zooqle.Net
 {
     public static partial class ZooqleClient
     {
-        internal const string zooqleItemSearchPath = "qss";
+        internal const string ZooqleItemSearchPath = "qss";
 
         /// <summary>
         /// Finds the movie, TV show, or actor from the given search terms.
@@ -23,7 +23,7 @@ namespace Zooqle.Net
             if (string.IsNullOrWhiteSpace(searchTerms))
                 return new ReadOnlyCollection<ZooqleItem>(new List<ZooqleItem>());
 
-            var query = $"{zooqleItemSearchPath}/{searchTerms}";
+            var query = $"{ZooqleItemSearchPath}/{searchTerms}";
             var response = await httpClient.GetStringAsync(query).ConfigureAwait(false);
 
             return JsonConvert.DeserializeObject<ReadOnlyCollection<ZooqleItem>>(response);
