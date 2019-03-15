@@ -2,8 +2,8 @@ namespace Zooqle.Net.Advanced
 {
     public struct Size
     {
-        public int Amount;
-        public SizeUnit Unit;
+        public int Amount { get; }
+        public SizeUnit Unit { get; }
 
         public Size(int amount, SizeUnit unit)
         {

@@ -2,9 +2,9 @@ namespace Zooqle.Net.Advanced
 {
     public struct Age
     {
-        public int Amount;
-        public TimeUnit Unit;
-        public bool IsNewer;
+        public int Amount { get; }
+        public TimeUnit Unit { get; }
+        public bool IsNewer { get; }
 
         public Age(int amount, TimeUnit unit, bool isNewer)
         {
