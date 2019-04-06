@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -12,9 +13,9 @@ namespace Zooqle.Net
 {
     public static partial class ZooqleClient
     {
-        internal const string ZooqleBaseUrl = "https://zooqle.com/";
-        internal const string ZooqleTorrentSearchPath = "search";
-        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri(ZooqleBaseUrl) };
+        internal const string BaseUrl = "https://zooqle.com";
+        internal const string TorrentSearchPath = "search";
+        private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
 
         /// <summary>
         /// Searches for torrents with the given advanced query.
@@ -41,7 +42,7 @@ namespace Zooqle.Net
             if (IsImdbId(searchTerms) || IsInfoHash(searchTerms))
                 searchTerms = $"\"{searchTerms}\"";
 
-            var query = $"{ZooqleTorrentSearchPath}?fmt=rss&q={searchTerms}&pg={page}";
+            var query = $"{TorrentSearchPath}?fmt=rss&q={searchTerms}&pg={page}";
             var xmlContent = await httpClient.GetStringAsync(query).ConfigureAwait(false);
 
             return GetSearchResults(xmlContent);
@@ -60,11 +61,11 @@ namespace Zooqle.Net
         {
             if (IsInfoHash(infoHash))
             {
-                var query = $"{ZooqleTorrentSearchPath}?q={infoHash}";
+                var query = $"{TorrentSearchPath}?q={infoHash}";
                 var request = new HttpRequestMessage(HttpMethod.Head, query);
-                var response = await httpClient.SendAsync(request).ConfigureAwait(false);
+                _ = await httpClient.SendAsync(request).ConfigureAwait(false);
 
-                if (request.RequestUri.AbsolutePath != $"/{ZooqleTorrentSearchPath}")
+                if (request.RequestUri.AbsolutePath != $"/{TorrentSearchPath}")
                     return request.RequestUri;
             }
             return null;
@@ -72,7 +73,7 @@ namespace Zooqle.Net
 
         private static SearchResult GetSearchResults(string xmlContent)
         {
-            var channel = XDocument.Parse(xmlContent).Element("rss").Element("channel");
+            XElement channel = XDocument.Parse(xmlContent).Element("rss").Element("channel");
 
             XElement getOpenSearchElement(string localName) =>
                 channel.Element(XName.Get(localName, "http://a9.com/-/spec/opensearch/1.1/"));
@@ -116,11 +117,10 @@ namespace Zooqle.Net
 
         static ZooqleClient()
         {
-            var headers = httpClient.DefaultRequestHeaders;
+            HttpRequestHeaders headers = httpClient.DefaultRequestHeaders;
             headers.Accept.ParseAdd("applicaton/rss+xml");
             headers.Accept.ParseAdd("application/json");
-            headers.Referrer = new Uri(ZooqleBaseUrl);
-            headers.UserAgent.ParseAdd($"Zooqle.Net/{ThisAssembly.Git.BaseTag.Substring(1)}");
+            headers.UserAgent.ParseAdd($"Zooqle.Net/{ThisAssembly.Git.BaseTag}");
         }
     }
 }

@@ -24,6 +24,6 @@ namespace Zooqle.Net
         public Uri BlurryCover => blurryCover ?? (blurryCover = GetUri(10));
 
         private Uri GetUri(int sizeNumber) =>
-            new Uri($"{ZooqleClient.ZooqleBaseUrl}img-{id}-{sizeNumber}.jpg");
+            new Uri($"{ZooqleClient.BaseUrl}/img-{id}-{sizeNumber}.jpg");
     }
 }
